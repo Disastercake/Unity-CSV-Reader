@@ -150,7 +150,7 @@ namespace Csv
         /// <summary>
         /// Does a Resources.Load(fileName) and converts the object to a TextAsset.
         /// </summary>
-        private static bool TryLoadTextFileFromResources(string fileName, out UnityEngine.TextAsset asset)
+        public static bool TryLoadTextFileFromResources(string fileName, out UnityEngine.TextAsset asset)
         {
             asset = null;
 
