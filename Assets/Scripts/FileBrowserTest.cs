@@ -8,9 +8,26 @@ public class FileBrowserTest : MonoBehaviour
 	// Warning: paths returned by FileBrowser dialogs do not contain a trailing '\' character
 	// Warning: FileBrowser can only show 1 dialog at a time
 
-	private string destinationPath = string.Empty;
+	private string _destinationPath = string.Empty;
+	private const string DEFAULT_LOC_FOLDER_NAME = "Localization Files";
+	private void SetDestinationPath(string path)
+	{
+		_destinationPath = path;
+		try { Messenger<string>.Broadcast(Messages.DirectoryChosen, _destinationPath); } catch { }
+	}
 
-	public void OpenFileBrowser()
+    private void Start()
+    {
+		// Do this in start
+		var path = Path.Combine(Application.persistentDataPath.Replace('/', Path.DirectorySeparatorChar), DEFAULT_LOC_FOLDER_NAME);
+
+		if (!Directory.Exists(path))
+			Directory.CreateDirectory(path);
+
+		SetDestinationPath(path);
+	}
+
+    public void OpenFileBrowser()
 	{
 		// Set filters (optional)
 		// It is sufficient to set the filters just once (instead of each time before showing the file browser dialog), 
@@ -65,7 +82,7 @@ public class FileBrowserTest : MonoBehaviour
 		yield return FileBrowser.WaitForLoadDialog(
 			FileBrowser.PickMode.Folders,
 			true,
-			destinationPath,
+			_destinationPath,
 			null,
 			"Load Files and Folders", "Load");
 
@@ -75,8 +92,7 @@ public class FileBrowserTest : MonoBehaviour
 
 		if (FileBrowser.Success)
         {
-			destinationPath = FileBrowser.Result[0];
-			try { Messenger<string>.Broadcast(Messages.DirectoryChosen, destinationPath); } catch { }
+			SetDestinationPath(FileBrowser.Result[0]);
 		}
 
 		//if (FileBrowser.Success)
