@@ -10,11 +10,6 @@ namespace Csv
     public static class CsvHandler
     {
         /// <summary>
-        /// Caches the loaded files so they don't need to be loaded again.
-        /// </summary>
-        private static Dictionary<string, UnityEngine.TextAsset> _loadedScripts = new Dictionary<string, UnityEngine.TextAsset>();
-
-        /// <summary>
         /// Attempts to read a CSV file and cache the data in a CsvData object.
         /// Use this method to reuse CsvData objects so they don't need to be reallocated.
         /// </summary>
@@ -94,7 +89,7 @@ namespace Csv
         /// returnedArray[row] = get entire row
         /// returnedArray[row][column] = get exact cell
         /// </summary>
-        public static bool TryGetCsvStrings(string fileName, out List<List<string>> data)
+        public static bool TryGetCsvStringsFromResources(string fileName, out List<List<string>> data)
         {
             data = new List<List<string>>();
 
@@ -149,7 +144,7 @@ namespace Csv
         /// Loads the specified file from Resources.
         /// Cycles through the file from beginning towards the end, then stops at and caches the first occurance of the matching value in the first column.
         /// </summary>
-        public static bool TryGetCsvStrings(string fileName, string firstColumnValue, out List<string> rowValues)
+        public static bool TryGetCsvStringsFromResources(string fileName, string firstColumnValue, out List<string> rowValues)
         {
             rowValues = new List<string>();
 
@@ -210,21 +205,15 @@ namespace Csv
             //   This fixes an issue with the file not updating because the database didn't clear.
             if (UnityEngine.Application.isPlaying)
             {
-                if (_loadedScripts.TryGetValue(fileName, out asset) == false)
+                var loadedObject = UnityEngine.Resources.Load(fileName);
+
+                if (loadedObject == null)
                 {
-                    var loadedObject = UnityEngine.Resources.Load(fileName);
-
-                    if (loadedObject == null)
-                    {
-                        UnityEngine.Debug.LogError("File did not exist: " + fileName);
-                        return false;
-                    }
-
-                    asset = UnityEngine.Resources.Load(fileName) as UnityEngine.TextAsset;
-
-                    // Note: This will add null values, but might as well.
-                    _loadedScripts.Add(fileName, asset);
+                    UnityEngine.Debug.LogError("File did not exist: " + fileName);
+                    return false;
                 }
+
+                asset = UnityEngine.Resources.Load(fileName) as UnityEngine.TextAsset;
             }
             else
             {
