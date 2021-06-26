@@ -22,7 +22,7 @@ namespace Csv
         {
             List<List<string>> rawdata;
 
-            if (TryGetCsvStrings(fileName, out rawdata))
+            if (TryGetCsvStringsFromResources(fileName, out rawdata))
             {
                 if (rawdata.Count > 0)
                 {
@@ -32,6 +32,58 @@ namespace Csv
             }
             
             return false;
+        }
+
+        public static bool TryGetCsvStringFromPath(string path, out List<List<string>> data)
+        {
+            data = new List<List<string>>();
+
+            if (!File.Exists(path))
+            {
+                return false;
+            }
+
+            // open the file "data.csv" which is a CSV file with headers
+            using (CsvReader csv =
+                   new CsvReader(new StreamReader(path), true))
+            {
+
+                // missing fields will not throw an exception,
+                // but will instead be treated as if there was a null value
+                csv.MissingFieldAction = MissingFieldAction.ReplaceByNull;
+                // to replace by "" instead, then use the following action:
+                //csv.MissingFieldAction = MissingFieldAction.ReplaceByEmpty;
+                int fieldCount = csv.FieldCount;
+
+#pragma warning disable 219
+                string[] headers = csv.GetFieldHeaders();
+#pragma warning restore 219
+
+                int row = 0;
+
+                while (csv.ReadNextRecord()) // Each iteration is a new row.
+                {
+                    data.Add(new List<string>());
+
+                    if (fieldCount > 0)
+                    {
+                        if (csv[0] != null)
+                        {
+                            for (int i = 0; i < fieldCount; i++)
+                            {
+                                if (csv[i] != null)
+                                    data[row].Add(csv[i]);
+                                else
+                                    data[row].Add(string.Empty);
+                            }
+                        }
+                    }
+
+                    row++;
+                }
+            }
+
+            return data.Count > 0;
         }
 
         /// <summary>
