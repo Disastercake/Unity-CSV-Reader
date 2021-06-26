@@ -16,15 +16,35 @@ public class FileBrowserTest : MonoBehaviour
 		try { Messenger<string>.Broadcast(Messages.DirectoryChosen, _destinationPath); } catch { }
 	}
 
+	/// <summary>
+	/// For some reason the persistent data path does not have the correct path separator.
+	/// </summary>
+	/// <returns></returns>
+	private string ReplaceBackslashWithSeparator(string path)
+    {
+		path = path.Replace('/', Path.DirectorySeparatorChar);
+		return path;
+	}
+
     private void Start()
     {
 		// Do this in start
-		var path = Path.Combine(Application.persistentDataPath.Replace('/', Path.DirectorySeparatorChar), DEFAULT_LOC_FOLDER_NAME);
+		var path = Path.Combine(ReplaceBackslashWithSeparator(Application.persistentDataPath), DEFAULT_LOC_FOLDER_NAME);
 
 		if (!Directory.Exists(path))
 			Directory.CreateDirectory(path);
 
+		_CopyDefaultLocFiles(path);
+
 		SetDestinationPath(path);
+	}
+
+	private void _CopyDefaultLocFiles(string path)
+	{
+		//Write some text to the test.txt file
+		StreamWriter writer = new StreamWriter(path, false);
+		writer.WriteLine("Test");
+		writer.Close();
 	}
 
     public void OpenFileBrowser()
@@ -92,7 +112,7 @@ public class FileBrowserTest : MonoBehaviour
 
 		if (FileBrowser.Success)
         {
-			SetDestinationPath(FileBrowser.Result[0]);
+			SetDestinationPath(ReplaceBackslashWithSeparator(FileBrowser.Result[0]));
 		}
 
 		//if (FileBrowser.Success)
