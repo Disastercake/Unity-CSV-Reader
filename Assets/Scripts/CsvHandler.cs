@@ -25,10 +25,13 @@ namespace Csv
             if (TryGetCsvStrings(fileName, out rawdata))
             {
                 if (rawdata.Count > 0)
+                {
                     data.SetRawData(rawdata);
+                    return true;
+                }
             }
-
-            return data != null;
+            
+            return false;
         }
 
         /// <summary>
