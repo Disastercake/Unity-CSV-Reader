@@ -22,6 +22,26 @@ namespace Csv
         /// </summary>
         public List<List<string>> RawData { get; private set; }
 
+        /// <summary>
+        /// Returns the amount of rows in the RawData.
+        /// </summary>
+        public int RowCount()
+        {
+            if (RawData == null) return 0;
+            else return RawData.Count;
+        }
+
+        /// <summary>
+        /// Returns the count of the first list.
+        /// </summary>
+        public int ColCount()
+        {
+            if (RowCount() > 0)
+                return RawData[0].Count;
+            else
+                return 0;
+        }
+
         public void SetRawData(List<List<string>> rawData)
         {
             RawData = rawData;
