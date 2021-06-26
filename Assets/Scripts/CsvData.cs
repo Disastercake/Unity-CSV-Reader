@@ -19,6 +19,7 @@ namespace Csv
 
         /// <summary>
         /// The raw data parsed from the CSV file.
+        /// NOTE: This is not a copy.  Altering will affect this CsvData object.
         /// </summary>
         public List<List<string>> RawData { get; private set; }
 
