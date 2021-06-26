@@ -1,15 +1,35 @@
-using System.Collections;
-using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using System.Collections.Generic;
 
-public class TestCsvGetter : MonoBehaviour
+public class TestCsvGetter : EditorWindow
 {
-    // Start is called before the first frame update.
-    void Start()
+    string fileName = "ItemData_Fish";
+
+    // Add menu item named "CSV" to the Assets menu
+    [MenuItem("Assets/CSV/Test CSV Reader")]
+    public static void ShowWindow()
+    {
+        //Show existing window instance. If one doesn't exist, make one.
+        EditorWindow.GetWindow(typeof(TestCsvGetter));
+    }
+
+    void OnGUI()
+    {
+        GUILayout.Label("Test CSV Reader", EditorStyles.boldLabel);
+        fileName = EditorGUILayout.TextField("CSV file name", fileName);
+
+        if (GUILayout.Button("Try to read CSV"))
+        {
+            Test(fileName);
+        }
+    }
+
+    void Test(string fileName)
     {
         Csv.CsvData csv = new Csv.CsvData();
 
-        if (Csv.CsvHandler.TryGetCsvData("ItemData_Fish", in csv))
+        if (Csv.CsvHandler.TryGetCsvData(fileName, in csv))
         {
             var str = new System.Text.StringBuilder();
 
@@ -17,7 +37,7 @@ public class TestCsvGetter : MonoBehaviour
             {
                 List<string> row;
 
-                if(csv.TryGetRow(i1, out row))
+                if (csv.TryGetRow(i1, out row))
                 {
                     str.AppendLine();
                     str.Append(string.Format("Row {0}: ", i1));
