@@ -33,7 +33,7 @@ public class GameTextHandler : MonoBehaviour
             List<string> row;
 
             if (data.TryGetRow(0, out row))
-                txt = row[0];
+                txt = row[1];
             else
                 Debug.LogError("TryGetRow");
         }
