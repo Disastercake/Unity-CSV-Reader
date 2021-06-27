@@ -8,14 +8,10 @@ public class FileBrowserTest : MonoBehaviour
 	// Warning: paths returned by FileBrowser dialogs do not contain a trailing '\' character
 	// Warning: FileBrowser can only show 1 dialog at a time
 
-	private string _destinationPath = string.Empty;
-	private const string DEFAULT_LOC_FOLDER_NAME = "Localization Files";
 
-	private readonly string[] DEFAULT_FILES = new string[] { "loc_en", "loc_es", "loc_jp" };
 	private void SetDestinationPath(string path)
 	{
-		_destinationPath = path;
-		try { Messenger<string>.Broadcast(Messages.DirectoryChosen, _destinationPath); } catch { }
+		LocalizationHandler.SetLocFilePath(path);
 	}
 
 	/// <summary>
@@ -30,33 +26,7 @@ public class FileBrowserTest : MonoBehaviour
 
     private void Start()
     {
-		// Do this in start
-		var path = Path.Combine(ReplaceBackslashWithSeparator(Application.persistentDataPath), DEFAULT_LOC_FOLDER_NAME);
 
-		if (!Directory.Exists(path))
-			Directory.CreateDirectory(path);
-
-		_CopyDefaultLocFiles(path);
-
-		SetDestinationPath(path);
-	}
-
-	/// <summary>
-	/// Copy the default loc files to the specified path.
-	/// </summary>
-	private void _CopyDefaultLocFiles(string path)
-	{
-		TextAsset ta;
-
-        foreach (var fileName in DEFAULT_FILES)
-        {
-			if (Csv.CsvHandler.TryLoadTextFileFromResources(fileName, out ta))
-			{
-				StreamWriter writer = new StreamWriter(Path.Combine(path, fileName + ".csv"), false);
-				writer.WriteLine(ta.text);
-				writer.Close();
-			}
-        }
 	}
 
     public void OpenFileBrowser()
@@ -114,7 +84,7 @@ public class FileBrowserTest : MonoBehaviour
 		yield return FileBrowser.WaitForLoadDialog(
 			FileBrowser.PickMode.Folders,
 			true,
-			_destinationPath,
+			LocalizationHandler.LocFolderPath,
 			null,
 			"Load Files and Folders", "Load");
 
