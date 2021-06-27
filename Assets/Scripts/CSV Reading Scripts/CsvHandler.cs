@@ -29,7 +29,27 @@ namespace Csv
             return false;
         }
 
-        public static bool TryGetCsvStringFromPath(string path, out List<List<string>> data)
+        /// <summary>
+        /// Attempts to read a CSV file and cache the data in a CsvData object.
+        /// Use this method to reuse CsvData objects so they don't need to be reallocated.
+        /// </summary>
+        public static bool TryGetCsvDataFromPath(string fileName, in CsvData data)
+        {
+            List<List<string>> rawdata;
+
+            if (TryGetCsvStringsFromPath(fileName, out rawdata))
+            {
+                if (rawdata.Count > 0)
+                {
+                    data.SetRawData(rawdata);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool TryGetCsvStringsFromPath(string path, out List<List<string>> data)
         {
             data = new List<List<string>>();
 
