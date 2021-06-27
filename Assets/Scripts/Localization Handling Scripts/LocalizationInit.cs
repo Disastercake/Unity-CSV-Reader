@@ -35,7 +35,7 @@ public class LocalizationInit : MonoBehaviour
 
     private void Done()
     {
-        try { Messenger.Broadcast(Messages.LocSettingChanged); } catch { }
+        LocalizationHandler.SetLoc("en");
     }
 
     /// <summary>

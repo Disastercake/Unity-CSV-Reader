@@ -8,7 +8,10 @@ public static class LocalizationHandler
     public static string LocID { get; private set; } = "en";
     public static void SetLoc(string id)
     {
+        if (LocID == id) return;
+
         LocID = id;
+        try { Messenger.Broadcast(Messages.LocSettingChanged); } catch { }
     }
 
     public static string LocFolderPath { get; private set; } = string.Empty;
@@ -16,7 +19,7 @@ public static class LocalizationHandler
     public static void SetLocFilePath(string path)
     {
         LocFolderPath = path;
-        try { Messenger<string>.Broadcast(Messages.DirectoryChosen, LocFolderPath); } catch { }
+        try { Messenger.Broadcast(Messages.LocSettingChanged); } catch { }
     }
 
     public static string CurrentLocFileName()

@@ -14,18 +14,18 @@ public class SelectedDirectoryDisplay : MonoBehaviour
         _textComp = GetComponent<TMPro.TextMeshProUGUI>();
         _textComp.text = string.Empty;
 
-        DirectoryChosen(LocalizationHandler.LocFolderPath);
+        DirectoryChosen();
 
-        try { Messenger<string>.AddListener(Messages.DirectoryChosen, DirectoryChosen); } catch { }
+        try { Messenger.AddListener(Messages.LocSettingChanged, DirectoryChosen); } catch { }
     }
 
     private void OnDestroy()
     {
-        try { Messenger<string>.RemoveListener(Messages.DirectoryChosen, DirectoryChosen); } catch { }
+        try { Messenger.RemoveListener(Messages.LocSettingChanged, DirectoryChosen); } catch { }
     }
 
-    private void DirectoryChosen(string directory)
+    private void DirectoryChosen()
     {
-        _textComp.text = directory;
+        _textComp.text = LocalizationHandler.LocFolderPath;
     }
 }
